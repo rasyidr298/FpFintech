@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
 }
@@ -12,12 +12,14 @@ android {
 
     defaultConfig {
         minSdk 21
-        targetSdk 32
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
 
-        buildConfigField("String", "DB_LOCAL_NAME", "\"oz3S2JnzQ7elXXaQL4su2uY\"")
+        buildConfigField("String", "DB_LOCAL_NAME", "\"adsadasdafajkfkav\"")
         buildConfigField("String", "BASE_URL", "\"fintech.online\"")
         buildConfigField("String", "BASE_NGROK", "\"test.online\"")
         buildConfigField("String", "API_KEY", "\"adbfdsiavfbaslidbvdaybidab\"")
@@ -82,8 +84,4 @@ dependencies {
     //retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-
-    //ok http
-//    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
 }
