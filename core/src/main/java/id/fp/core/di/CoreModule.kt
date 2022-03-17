@@ -8,6 +8,7 @@ import id.fp.core.data.source.remote.RemoteDataSource
 import id.fp.core.data.source.remote.network.ApiService
 import id.fp.core.domain.AppRepository
 import id.fp.core.domain.IAppRepository
+import id.fp.core.utils.PrefManager
 import net.sqlcipher.database.SQLiteDatabase
 import net.sqlcipher.database.SupportFactory
 import okhttp3.OkHttpClient
@@ -61,6 +62,6 @@ val repositoryModule = module {
     single<IAppRepository> { AppRepository(get(), get()) }
 }
 
-//val prefManagerModule = module {
-//    single { PrefManager(androidContext()) }
-//}
+val prefManagerModule = module {
+    single { PrefManager(androidContext()) }
+}

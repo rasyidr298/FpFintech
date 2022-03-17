@@ -3,6 +3,7 @@ package id.fp.fintech
 import android.app.Application
 import id.fp.core.di.databaseModule
 import id.fp.core.di.networkModule
+import id.fp.core.di.prefManagerModule
 import id.fp.core.di.repositoryModule
 import id.fp.fintech.di.useCaseModule
 import id.fp.fintech.di.viewModelModule
@@ -30,7 +31,7 @@ class MyApp : Application() {
             modules(
                 listOf(
                     networkModule,
-//                    prefManagerModule,
+                    prefManagerModule,
                     databaseModule,
                     repositoryModule,
                     useCaseModule,
