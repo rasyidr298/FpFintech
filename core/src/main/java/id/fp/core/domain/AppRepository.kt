@@ -1,11 +1,16 @@
 package id.fp.core.domain
 
-import id.candlekeeper.core.data.Resource
+import id.fp.core.data.Resource
 import id.fp.core.data.NetworkBoundResource
 import id.fp.core.data.source.local.LocalDataSource
 import id.fp.core.data.source.remote.RemoteDataSource
+import id.fp.core.data.source.remote.mapper.CoinMapper.toDomain
+import id.fp.core.data.source.remote.mapper.ExchangeMapper.toDomain
 import id.fp.core.data.source.remote.network.ApiResponse
 import id.fp.core.data.source.remote.response.DataSample
+import id.fp.core.domain.model.Coin
+import id.fp.core.domain.model.Exchange
+import id.fp.core.domain.model.OnBoardingPart
 import id.fp.core.domain.model.Sample
 import id.fp.core.utils.DataMapper
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +24,14 @@ interface IAppRepository {
     fun getSample(): Flow<ApiResponse<List<Sample>>>
     fun searchSample(search: String): Flow<List<Sample>>
     fun postSample(dataSample: HashMap<String, RequestBody>): Flow<ApiResponse<Boolean>>
+
+    fun fetchCoins(currency: String): Flow<Resource<List<Coin>>>
+    fun fetchCoinById(id: String): Flow<Resource<Coin>>
+    fun fetchExchanges(): Flow<Resource<List<Exchange>>>
+    fun fetchMarketChartData(coinId: String, currency: String, days: Int): Flow<Resource<List<List<Number>>>>
+
+    suspend fun setOnboardingCompleted(isCompleted: Boolean)
+    fun getOnBoardingParts(): List<OnBoardingPart>
 }
 
 class AppRepository(
@@ -63,4 +76,103 @@ class AppRepository(
         return remoteDataSource.pushResponse(dataSample)
     }
 
+    override fun fetchCoins(currency: String): Flow<Resource<List<Coin>>> {
+        return remoteDataSource.fetchCoins(currency).map {
+            try {
+                when (it) {
+                    is ApiResponse.Error -> {
+                        Resource.Error(it.errorMessage)
+                    }
+                    is ApiResponse.Empty -> {
+                        Resource.Error("No result found")
+                    }
+                    is ApiResponse.Success -> {
+                        Resource.Success(it.data.toDomain())
+                    }
+                    is ApiResponse.Loading -> Resource.Loading()
+                }
+
+            } catch (e: Exception) {
+                Resource.Error(e.message!!)
+            }
+        }
+    }
+
+    override fun fetchCoinById(id: String): Flow<Resource<Coin>> {
+        return remoteDataSource.fetchCoinById(id).map {
+            try {
+                when (it) {
+                    is ApiResponse.Error -> {
+                        Resource.Error(it.errorMessage)
+                    }
+                    is ApiResponse.Empty -> {
+                        Resource.Error("No result found")
+                    }
+                    is ApiResponse.Success -> {
+                        Resource.Success(it.data.toDomain())
+                    }
+                    is ApiResponse.Loading -> Resource.Loading()
+                }
+
+            } catch (e: Exception) {
+                Resource.Error(e.message!!)
+            }
+        }
+    }
+
+    override fun fetchExchanges(): Flow<Resource<List<Exchange>>> {
+        return remoteDataSource.fetchExchanges().map {
+            try {
+                when (it) {
+                    is ApiResponse.Error -> {
+                        Resource.Error(it.errorMessage)
+                    }
+                    is ApiResponse.Empty -> {
+                        Resource.Error("No result found")
+                    }
+                    is ApiResponse.Success -> {
+                        Resource.Success(it.data.toDomain())
+                    }
+                    is ApiResponse.Loading -> Resource.Loading()
+                }
+
+            } catch (e: Exception) {
+                Resource.Error(e.message!!)
+            }
+        }
+    }
+
+    override fun fetchMarketChartData(
+        coinId: String,
+        currency: String,
+        days: Int
+    ): Flow<Resource<List<List<Number>>>> {
+        return remoteDataSource.fetchMarketChartData(coinId, currency, days).map {
+            try {
+                when (it) {
+                    is ApiResponse.Error -> {
+                        Resource.Error(it.errorMessage)
+                    }
+                    is ApiResponse.Empty -> {
+                        Resource.Error("No result found")
+                    }
+                    is ApiResponse.Success -> {
+                        Resource.Success(it.data.prices)
+                    }
+                    is ApiResponse.Loading -> Resource.Loading()
+                }
+
+            } catch (e: Exception) {
+                Resource.Error(e.message!!)
+            }
+        }
+    }
+
+    override suspend fun setOnboardingCompleted(isCompleted: Boolean) {
+        localDataSource.setOnboardingCompleted(isCompleted)
+    }
+
+    override fun getOnBoardingParts(): List<OnBoardingPart> {
+        return localDataSource.getOnBoardingList()
+    }
 }

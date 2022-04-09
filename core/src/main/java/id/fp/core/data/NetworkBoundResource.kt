@@ -1,6 +1,5 @@
 package id.fp.core.data
 
-import id.candlekeeper.core.data.Resource
 import id.fp.core.data.source.remote.network.ApiResponse
 import kotlinx.coroutines.flow.*
 
